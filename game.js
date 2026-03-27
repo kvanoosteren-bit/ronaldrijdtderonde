@@ -303,6 +303,9 @@ const Game = {
         this.lastSpawnTime = 0;
         this.pedaling = 0;
         this.ronaldX = 0;
+        this.finishing = false;
+        this.finishTimer = 0;
+        this.ronaldFinishOffset = 0;
 
         this.showScreen('game');
         Renderer.resize();
@@ -334,47 +337,75 @@ const Game = {
         this.elapsed += dt;
         this.pedaling += dt;
 
-        this.update(dt);
-        this.render();
+        // Start finish-animatie als tijd om is
+        if (this.elapsed >= CONFIG.gameDuration && !this.finishing) {
+            this.finishing = true;
+            this.finishTimer = 0;
+        }
 
-        if (this.elapsed >= CONFIG.gameDuration) {
-            this.endGame();
+        // Tijdens finish: Ronald rijdt nog 2 seconden door over de lijn
+        if (this.finishing) {
+            this.finishTimer += dt;
+            // Ronald schuift omhoog over het scherm (over de finish)
+            this.ronaldFinishOffset = (this.finishTimer / 2.0) * Renderer.canvas.height * 0.4;
+            // Geen items meer spawnen, geen input meer
+            this.update(dt, true); // true = finishing mode
+            this.render();
+            if (this.finishTimer >= 2.0) {
+                this.endGame();
+                return;
+            }
+            requestAnimationFrame(() => this.gameLoop());
             return;
         }
+
+        this.update(dt, false);
+        this.render();
 
         requestAnimationFrame(() => this.gameLoop());
     },
 
     /* ---- UPDATE LOGICA ---- */
 
-    update(dt) {
+    update(dt, isFinishing) {
         const w = Renderer.canvas.width;
         const h = Renderer.canvas.height;
 
-        // Gewichtsverlies
-        this.weight -= CONFIG.weightLossPerSec * dt;
-        if (this.weight < CONFIG.minWeight) this.weight = CONFIG.minWeight;
+        // Gewichtsverlies (niet meer tijdens finish)
+        if (!isFinishing) {
+            this.weight -= CONFIG.weightLossPerSec * dt;
+            if (this.weight < CONFIG.minWeight) this.weight = CONFIG.minWeight;
+        }
 
-        // Scroll
+        // Scroll (blijft draaien, ook tijdens finish)
         this.scrollOffset += CONFIG.roadScrollSpeed * dt;
 
         // Ronald's positie
         const roadLeft = w * (0.5 - CONFIG.laneWidth * CONFIG.laneCount / 2);
         const roadWidth = w * CONFIG.laneWidth * CONFIG.laneCount;
         const laneW = roadWidth / CONFIG.laneCount;
-        const targetX = roadLeft + laneW * this.targetLane + laneW / 2;
+        const targetX = roadLeft + laneW * 1 + laneW / 2; // midden baan tijdens finish
 
         if (!this.ronaldX) this.ronaldX = targetX;
-        this.ronaldX += (targetX - this.ronaldX) * CONFIG.laneSwitchSpeed;
-        this.ronaldY = h * 0.75;
+        if (isFinishing) {
+            // Tijdens finish: naar midden en omhoog rijden
+            this.ronaldX += (targetX - this.ronaldX) * 0.05;
+            this.ronaldY = h * 0.75 - (this.ronaldFinishOffset || 0);
+        } else {
+            const normalTargetX = roadLeft + laneW * this.targetLane + laneW / 2;
+            this.ronaldX += (normalTargetX - this.ronaldX) * CONFIG.laneSwitchSpeed;
+            this.ronaldY = h * 0.75;
+        }
 
         // Moeilijkheidsverhoging over tijd
-        const progress = this.elapsed / CONFIG.gameDuration;
+        const progress = Math.min(this.elapsed / CONFIG.gameDuration, 1);
         const diffMult = 1 + progress * (CONFIG.difficultyRamp.speedIncrease - 1);
         const spawnMult = 1 - progress * (1 - CONFIG.difficultyRamp.spawnDecrease);
 
-        // Spawn items
-        this.spawnItems(dt, spawnMult);
+        // Spawn items (niet tijdens finish)
+        if (!isFinishing) {
+            this.spawnItems(dt, spawnMult);
+        }
 
         // Update items (sneller naarmate het vordert)
         this.items.forEach(item => {
@@ -496,11 +527,20 @@ const Game = {
         const road = Renderer.drawRoad(this.scrollOffset);
         Renderer.drawFlags(this.scrollOffset);
 
-        // Finish lijn
-        const progress = this.elapsed / CONFIG.gameDuration;
-        if (progress > 0.9) {
-            const finishY = Renderer.canvas.height * 0.45 +
-                (1 - (progress - 0.9) / 0.1) * (Renderer.canvas.height * 0.3);
+        // Finish lijn - schuift naar Ronald toe, dan staat stil
+        const progress = Math.min(this.elapsed / CONFIG.gameDuration, 1);
+        if (progress > 0.85 || this.finishing) {
+            let finishY;
+            if (this.finishing) {
+                // Tijdens finish-animatie: lijn staat vast terwijl Ronald erdoorheen rijdt
+                const finishProgress = Math.min((this.finishTimer || 0) / 1.0, 1);
+                finishY = Renderer.canvas.height * 0.65 + finishProgress * Renderer.canvas.height * 0.2;
+            } else {
+                // Lijn komt in beeld van boven
+                const approach = (progress - 0.85) / 0.15;
+                finishY = Renderer.canvas.height * 0.45 +
+                    approach * (Renderer.canvas.height * 0.2);
+            }
             Renderer.drawFinishLine(road.roadLeft, road.roadWidth, finishY);
         }
 

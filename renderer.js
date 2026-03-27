@@ -334,6 +334,77 @@ const Renderer = {
             }
         }
 
+        // --- ARMEN MET HEMD-MOUWEN EN TATTOO ---
+
+        // Linkerarm (met tattoo "MAGIC")
+        // Hemd mouw (roze, kort)
+        ctx.fillStyle = '#E84887';
+        ctx.beginPath();
+        ctx.ellipse(-11 * s, -8 * s, 5 * s, 4 * s, -0.3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Bovenarm (huid)
+        ctx.strokeStyle = '#F5CBA7';
+        ctx.lineWidth = 6 * s;
+        ctx.beginPath();
+        ctx.moveTo(-11 * s, -6 * s);
+        ctx.lineTo(-16 * s, 2 * s);
+        ctx.stroke();
+
+        // Onderarm
+        ctx.beginPath();
+        ctx.moveTo(-16 * s, 2 * s);
+        ctx.lineTo(-12 * s, 8 * s);
+        ctx.stroke();
+
+        // TATTOO "MAGIC" op linkerbovenarm
+        ctx.save();
+        ctx.translate(-13 * s, -2 * s);
+        ctx.rotate(-0.3);
+        // Tattoo achtergrond (subtiel)
+        ctx.fillStyle = 'rgba(0, 50, 100, 0.15)';
+        ctx.fillRect(-8 * s, -3 * s, 16 * s, 6 * s);
+        // Tattoo tekst
+        ctx.fillStyle = '#1a3a5c';
+        ctx.font = `bold ${4.5 * s}px serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText('MAGIC', 0, 1.5 * s);
+        // Tattoo decoratie (sterretjes)
+        ctx.font = `${3 * s}px serif`;
+        ctx.fillText('★', -9 * s, 1.5 * s);
+        ctx.fillText('★', 9 * s, 1.5 * s);
+        ctx.restore();
+
+        // Rechterarm
+        // Hemd mouw
+        ctx.fillStyle = '#E84887';
+        ctx.beginPath();
+        ctx.ellipse(11 * s, -8 * s, 5 * s, 4 * s, 0.3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Bovenarm
+        ctx.strokeStyle = '#F5CBA7';
+        ctx.lineWidth = 6 * s;
+        ctx.beginPath();
+        ctx.moveTo(11 * s, -6 * s);
+        ctx.lineTo(16 * s, 2 * s);
+        ctx.stroke();
+
+        // Onderarm (naar stuur)
+        ctx.beginPath();
+        ctx.moveTo(16 * s, 2 * s);
+        ctx.lineTo(12 * s, 8 * s);
+        ctx.stroke();
+
+        // Handen op stuur
+        ctx.fillStyle = '#F5CBA7';
+        ctx.beginPath();
+        ctx.arc(-12 * s, 8 * s, 3 * s, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(12 * s, 8 * s, 3 * s, 0, Math.PI * 2);
+        ctx.fill();
+
         // --- HOOFD (KAAL! Geen helm, zoals de foto) ---
         const headR = 13 * s;
         const headY = -22 * s;
@@ -639,26 +710,26 @@ const Renderer = {
             ctx.textAlign = 'center';
 
             // Achtergrond balk
-            ctx.font = 'bold 14px sans-serif';
+            ctx.font = 'bold 18px sans-serif';
             const textW = ctx.measureText(fx.quote).width;
-            const boxW = Math.min(textW + 24, w - 20);
+            const boxW = Math.min(textW + 28, w - 16);
             const boxX = w / 2 - boxW / 2;
 
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
-            this.fillRoundRect(ctx, boxX, yPos - 14, boxW, 24, 8);
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+            this.fillRoundRect(ctx, boxX, yPos - 16, boxW, 30, 8);
 
             // Gekleurde rand links (per item type)
             const colors = { hamburger: '#D2691E', bier: '#F4A460', frieten: '#FFD700' };
             ctx.fillStyle = colors[fx.type] || '#FFD700';
-            ctx.fillRect(boxX, yPos - 12, 4, 20);
+            ctx.fillRect(boxX, yPos - 13, 5, 24);
 
-            // Quote tekst
+            // Quote tekst (groter!)
             ctx.fillStyle = '#FFD700';
-            ctx.fillText(fx.quote, w / 2, yPos + 4);
+            ctx.fillText(fx.quote, w / 2, yPos + 6);
 
             ctx.restore();
 
-            yPos += 30; // volgende quote eronder stapelen
+            yPos += 36; // volgende quote eronder stapelen
         });
     },
 

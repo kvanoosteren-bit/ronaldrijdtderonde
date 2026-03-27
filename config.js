@@ -10,7 +10,7 @@ const CONFIG = {
     weightLossPerSec: 0.6,    // kg verlies per seconde (lager = moeilijker)
 
     // Speelveld
-    gameDuration: 50,         // seconden totale race
+    gameDuration: 35,         // seconden totale race (korter!)
     laneCount: 3,             // aantal banen (links, midden, rechts)
     laneWidth: 0.28,          // breedte per baan als fractie van canvas
 
@@ -45,15 +45,15 @@ const CONFIG = {
         }
     },
 
-    // Item spawning - moeilijker: sneller en vaker
+    // Item spawning
     itemSpawnInterval: 0.55,  // nieuwe item elke X seconden
-    itemSpeed: 340,           // pixels per seconde (sneller)
-    itemSize: 48,             // iets groter
+    itemSpeed: 340,           // pixels per seconde
+    itemSize: 48,             // grootte items
 
     // Moeilijkheidsverhoging over tijd
     difficultyRamp: {
-        speedIncrease: 1.5,   // itemSpeed vermenigvuldiger na halve race
-        spawnDecrease: 0.7    // spawnInterval vermenigvuldiger (lager = vaker)
+        speedIncrease: 1.5,
+        spawnDecrease: 0.7
     },
 
     // Visueel
@@ -67,43 +67,49 @@ const CONFIG = {
     hillScrollSpeed: 80,
     roadScrollSpeed: 200,
 
-    // Cynische opmerkingen bij botsing
+    // Cynische opmerkingen bij botsing (grover!)
     collisionQuotes: {
         hamburger: [
-            '"Eentje kan geen kwaad" - Ronald, elke keer',
-            'McRonald strikes again!',
-            'Dat broodje vloog er zo in...',
-            'Hamburger helper!',
-            'Nog eentje voor onderweg!',
-            'Dieet begint morgen!',
-            'Wielrenners eten toch pasta? Dit is bijna pasta.',
-            'Hmm, extra kaas ook nog...',
-            'De koers is lang, de burger is lekker.',
-            'Calorieen zijn brandstof, toch?'
+            'Wat een varken!',
+            'McRonald, de vetzak!',
+            'Je wielrenbroek scheurt bijna!',
+            'Weer een kin erbij!',
+            'Dat broodje ging er in als een suppositoire!',
+            'Dieet? Nooit van gehoord!',
+            'Je lijkt meer op een vrachtwagen dan een wielrenner!',
+            'De weegschaal heeft PTSD door jou.',
+            'Die burger had meer calorieën dan je training.',
+            'Zelfs de hamburger had medelijden met je.',
+            'Ronald eet. Ronald groeit. Ronald walst.',
+            'Big Mac? Big Ronald!'
         ],
         bier: [
-            'Een goeie Belgische traditie!',
-            'Tripel of quadrupel? Maakt niet uit!',
-            'Biertje op de fiets, typisch Belgisch.',
-            'Cheers! ...wacht, ik fiets nog.',
-            'Nog 30 km, nog 3 pintjes.',
-            'Dorst is erger dan honger.',
-            'Speciaalbiertje! Kon niet weerstaan.',
-            'Herstellingsdrank, zeg maar.',
-            'Bier is vloeibaar brood. Dus gezond.',
-            'Proost! *wankelt even*'
+            'Zuipschuit op wielen!',
+            'Lansen bansen Ronald!',
+            'Je BAC is hoger dan je snelheid!',
+            'Proost dikzak!',
+            'Nog eentje en je valt van je fiets!',
+            'Belgisch bier: de vijand van elke weegschaal.',
+            'Je fietst in zigzag, gaat het?',
+            'Herstellingsdrank? Je bent niet eens gevallen!',
+            'Bier is vloeibaar brood. Jij bent een bakkerij.',
+            'Je lever stuurt een noodkreet.',
+            'Tour de France? Tour de Frisdrank!',
+            'Alcoholist op twee wielen!'
         ],
         frieten: [
-            'Met mayo uiteraard!',
-            'Echte Belgische frietjes!',
-            'De frituur is het echte peloton.',
-            'Grote of kleine puntzak? GROTE.',
-            'Frieten > finish.',
-            'Frietjes zijn groenten, bewijs het tegendeel.',
-            'Stoofvleessaus erbij? Waarom niet!',
-            'Die geur... onmogelijk te weerstaan.',
-            'Frituur Nummer 1 langs het parcours!',
-            'Krokant van buiten, vet van binnen. Net als Ronald.'
+            'PUNTZAK! Net als je lichaam!',
+            'Die frituur was je echte finish!',
+            'Fransen zeggen frites. Belgen zeggen FRIETEN. Ronald zegt ALLES.',
+            'Grote puntzak met alles. Net als Ronald.',
+            'Je bent meer aardappel dan atleet.',
+            'Die mayo druipt van je kin!',
+            'Frituur > Fitheid. Altijd.',
+            'Krokant van buiten, vet van binnen. Net als jij.',
+            'Stoofvleessaus erbij? Natuurlijk. ALLES erbij.',
+            'De frietboer kent je al bij naam!',
+            'Je wielrenfiets kreunt onder het gewicht.',
+            'Dat is geen sixpack, dat is een vaatje!'
         ]
     },
 

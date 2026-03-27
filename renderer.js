@@ -334,70 +334,107 @@ const Renderer = {
             }
         }
 
-        // --- ARMEN MET HEMD-MOUWEN EN TATTOO ---
+        // --- MEGA SPIERBALLEN ARMEN MET TATTOO ---
 
-        // Linkerarm (met tattoo "MAGIC")
+        // Linkerarm (met tattoo "MAGIC") - MEGA SPIERBAL
         // Hemd mouw (roze, kort)
         ctx.fillStyle = '#E84887';
         ctx.beginPath();
-        ctx.ellipse(-11 * s, -8 * s, 5 * s, 4 * s, -0.3, 0, Math.PI * 2);
+        ctx.ellipse(-12 * s, -8 * s, 7 * s, 5.5 * s, -0.3, 0, Math.PI * 2);
+        ctx.fill();
+        // Mouw randje
+        ctx.strokeStyle = '#D63B78';
+        ctx.lineWidth = 1.5 * s;
+        ctx.beginPath();
+        ctx.ellipse(-12 * s, -8 * s, 7 * s, 5.5 * s, -0.3, 0.5, Math.PI + 0.5);
+        ctx.stroke();
+
+        // Bovenarm - DIKKE SPIERBAL
+        ctx.fillStyle = '#F5CBA7';
+        ctx.beginPath();
+        ctx.ellipse(-16 * s, -2 * s, 9 * s, 6 * s, -0.4, 0, Math.PI * 2);
         ctx.fill();
 
-        // Bovenarm (huid)
-        ctx.strokeStyle = '#F5CBA7';
-        ctx.lineWidth = 6 * s;
+        // Bicep highlight (glans op spierbal)
+        ctx.fillStyle = 'rgba(255,255,255,0.25)';
         ctx.beginPath();
-        ctx.moveTo(-11 * s, -6 * s);
-        ctx.lineTo(-16 * s, 2 * s);
+        ctx.ellipse(-14 * s, -4 * s, 5 * s, 3 * s, -0.4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Spier-lijn detail (scheiding bicep/tricep)
+        ctx.strokeStyle = 'rgba(180,140,110,0.4)';
+        ctx.lineWidth = 1.2 * s;
+        ctx.beginPath();
+        ctx.moveTo(-12 * s, -6 * s);
+        ctx.quadraticCurveTo(-17 * s, -2 * s, -14 * s, 3 * s);
         ctx.stroke();
 
-        // Onderarm
+        // Onderarm (ook dik)
+        ctx.fillStyle = '#F5CBA7';
         ctx.beginPath();
-        ctx.moveTo(-16 * s, 2 * s);
-        ctx.lineTo(-12 * s, 8 * s);
-        ctx.stroke();
+        ctx.ellipse(-14 * s, 5 * s, 5 * s, 7 * s, -0.2, 0, Math.PI * 2);
+        ctx.fill();
 
-        // TATTOO "MAGIC" op linkerbovenarm
+        // TATTOO "MAGIC" - groot en leesbaar op de bicep
         ctx.save();
-        ctx.translate(-13 * s, -2 * s);
-        ctx.rotate(-0.3);
-        // Tattoo achtergrond (subtiel)
-        ctx.fillStyle = 'rgba(0, 50, 100, 0.15)';
-        ctx.fillRect(-8 * s, -3 * s, 16 * s, 6 * s);
-        // Tattoo tekst
-        ctx.fillStyle = '#1a3a5c';
-        ctx.font = `bold ${4.5 * s}px serif`;
+        ctx.translate(-16 * s, -2 * s);
+        ctx.rotate(-0.4);
+
+        // Tattoo achtergrond (banner/lint)
+        ctx.fillStyle = 'rgba(0, 30, 60, 0.2)';
+        this.fillRoundRect(ctx, -10 * s, -4.5 * s, 20 * s, 9 * s, 2 * s);
+
+        // Tattoo schaduw
+        ctx.fillStyle = 'rgba(0, 20, 50, 0.6)';
+        ctx.font = `900 ${7 * s}px "Arial Black", Impact, sans-serif`;
         ctx.textAlign = 'center';
-        ctx.fillText('MAGIC', 0, 1.5 * s);
-        // Tattoo decoratie (sterretjes)
-        ctx.font = `${3 * s}px serif`;
-        ctx.fillText('★', -9 * s, 1.5 * s);
-        ctx.fillText('★', 9 * s, 1.5 * s);
+        ctx.textBaseline = 'middle';
+        ctx.fillText('MAGIC', 0.5 * s, 0.5 * s);
+
+        // Tattoo tekst - groot en vet
+        ctx.fillStyle = '#0a1e3d';
+        ctx.fillText('MAGIC', 0, 0);
+
+        // Tattoo decoratie (sterretjes boven en onder)
+        ctx.fillStyle = '#0a1e3d';
+        ctx.font = `bold ${3.5 * s}px sans-serif`;
+        ctx.fillText('★ ★ ★', 0, -5.5 * s);
+        ctx.fillText('★ ★ ★', 0, 5.5 * s);
+
         ctx.restore();
 
-        // Rechterarm
+        // Rechterarm - ook gespierd
         // Hemd mouw
         ctx.fillStyle = '#E84887';
         ctx.beginPath();
-        ctx.ellipse(11 * s, -8 * s, 5 * s, 4 * s, 0.3, 0, Math.PI * 2);
+        ctx.ellipse(12 * s, -8 * s, 7 * s, 5.5 * s, 0.3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#D63B78';
+        ctx.lineWidth = 1.5 * s;
+        ctx.beginPath();
+        ctx.ellipse(12 * s, -8 * s, 7 * s, 5.5 * s, 0.3, -0.5, Math.PI - 0.5);
+        ctx.stroke();
+
+        // Bovenarm rechts - spierbal
+        ctx.fillStyle = '#F5CBA7';
+        ctx.beginPath();
+        ctx.ellipse(16 * s, -2 * s, 9 * s, 6 * s, 0.4, 0, Math.PI * 2);
         ctx.fill();
 
-        // Bovenarm
-        ctx.strokeStyle = '#F5CBA7';
-        ctx.lineWidth = 6 * s;
+        // Bicep highlight rechts
+        ctx.fillStyle = 'rgba(255,255,255,0.25)';
         ctx.beginPath();
-        ctx.moveTo(11 * s, -6 * s);
-        ctx.lineTo(16 * s, 2 * s);
-        ctx.stroke();
+        ctx.ellipse(14 * s, -4 * s, 5 * s, 3 * s, 0.4, 0, Math.PI * 2);
+        ctx.fill();
 
-        // Onderarm (naar stuur)
+        // Onderarm rechts
+        ctx.fillStyle = '#F5CBA7';
         ctx.beginPath();
-        ctx.moveTo(16 * s, 2 * s);
-        ctx.lineTo(12 * s, 8 * s);
-        ctx.stroke();
+        ctx.ellipse(14 * s, 5 * s, 5 * s, 7 * s, 0.2, 0, Math.PI * 2);
+        ctx.fill();
 
         // Handen op stuur
-        ctx.fillStyle = '#F5CBA7';
+        ctx.fillStyle = '#F0C0A0';
         ctx.beginPath();
         ctx.arc(-12 * s, 8 * s, 3 * s, 0, Math.PI * 2);
         ctx.fill();

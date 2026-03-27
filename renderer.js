@@ -272,69 +272,67 @@ const Renderer = {
         ctx.fillRect(pedalCX + legAngle1 * 12 * s - 5 * s, wheelY - 3 * s, 10 * s, 4 * s);
         ctx.fillRect(pedalCX + legAngle2 * 12 * s - 5 * s, wheelY - 3 * s, 10 * s, 4 * s);
 
-        // Torso / wielershirt
-        ctx.fillStyle = '#1565C0';
+        // Torso / wielershirt (ROZE - Pantani style!)
+        ctx.fillStyle = '#E84887';
         ctx.beginPath();
         ctx.ellipse(0, -4 * s, 12 * s, 14 * s, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // Gele bies op shirt
-        ctx.strokeStyle = '#FFD700';
-        ctx.lineWidth = 2.5 * s;
+        // Witte bies op roze shirt (Mercatone Uno stijl)
+        ctx.strokeStyle = '#FFF';
+        ctx.lineWidth = 2 * s;
         ctx.beginPath();
         ctx.moveTo(-12 * s, -4 * s);
         ctx.lineTo(12 * s, -4 * s);
         ctx.stroke();
 
-        // BUIK! (het grappigste deel - groeit flink met gewicht)
-        ctx.fillStyle = '#1976D2';
+        // Tweede bies (geel accent, Pantani)
+        ctx.strokeStyle = '#FFD700';
+        ctx.lineWidth = 1.5 * s;
+        ctx.beginPath();
+        ctx.moveTo(-11 * s, -7 * s);
+        ctx.lineTo(11 * s, -7 * s);
+        ctx.stroke();
+
+        // BUIK! (het grappigste deel - groeit flink met gewicht, GEEN ARMEN = meer zichtbaar!)
+        ctx.fillStyle = '#D63B78';
         ctx.beginPath();
         ctx.ellipse(
             2 * s, 4 * s,
-            bellySize * 0.7, bellySize * 0.55,
+            bellySize * 0.75, bellySize * 0.6,
+            0.15, 0, Math.PI * 2
+        );
+        ctx.fill();
+
+        // Buik highlight (glans - maakt de buik 3D)
+        ctx.fillStyle = 'rgba(255,255,255,0.18)';
+        ctx.beginPath();
+        ctx.ellipse(
+            -1 * s, 1 * s,
+            bellySize * 0.4, bellySize * 0.3,
             0.2, 0, Math.PI * 2
         );
         ctx.fill();
 
-        // Buik highlight (glans)
-        ctx.fillStyle = 'rgba(255,255,255,0.12)';
-        ctx.beginPath();
-        ctx.ellipse(
-            0, 1 * s,
-            bellySize * 0.35, bellySize * 0.25,
-            0.2, 0, Math.PI * 2
-        );
-        ctx.fill();
+        // Navel (zichtbaar door strak shirt bij hoog gewicht)
+        if (weight > 80) {
+            ctx.fillStyle = 'rgba(0,0,0,0.15)';
+            ctx.beginPath();
+            ctx.ellipse(1 * s, 5 * s, 1.5 * s, 2 * s, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
 
         // Buik-streep detail (shirt spant)
         if (weight > 85) {
-            ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+            ctx.strokeStyle = 'rgba(0,0,0,0.12)';
             ctx.lineWidth = 1;
-            for (let i = -2; i <= 2; i++) {
+            for (let i = -3; i <= 3; i++) {
                 ctx.beginPath();
-                ctx.moveTo(i * 4 * s, -2 * s);
-                ctx.lineTo(i * 5 * s, 10 * s);
+                ctx.moveTo(i * 3.5 * s, -2 * s);
+                ctx.lineTo(i * 4.5 * s, 12 * s);
                 ctx.stroke();
             }
         }
-
-        // Armen (naar stuur)
-        ctx.strokeStyle = '#F5CBA7';
-        ctx.lineWidth = 5 * s;
-        ctx.beginPath();
-        ctx.moveTo(5 * s, -10 * s);
-        ctx.quadraticCurveTo(10 * s, -2 * s, 12 * s, 4 * s);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(-5 * s, -10 * s);
-        ctx.quadraticCurveTo(6 * s, -2 * s, 12 * s, 4 * s);
-        ctx.stroke();
-
-        // Handschoenen
-        ctx.fillStyle = '#222';
-        ctx.beginPath();
-        ctx.arc(12 * s, 4 * s, 3.5 * s, 0, Math.PI * 2);
-        ctx.fill();
 
         // --- HOOFD (KAAL! Geen helm, zoals de foto) ---
         const headR = 13 * s;
@@ -593,43 +591,79 @@ const Renderer = {
 
     drawCollisionEffect(x, y, progress, itemType, quote) {
         const ctx = this.ctx;
-        const alpha = 1 - progress;
+        // Langzamere fade: pas na 60% begint het te verdwijnen
+        const alpha = progress < 0.6 ? 1 : 1 - ((progress - 0.6) / 0.4);
         const expand = progress * 30;
 
         ctx.save();
-        ctx.globalAlpha = alpha;
+        ctx.globalAlpha = Math.max(0, alpha);
 
-        // Gewicht-tekst
+        // Gewicht-tekst (zweeft omhoog)
         const weightGain = CONFIG.items[itemType].weight;
         ctx.fillStyle = '#FF4444';
-        ctx.font = 'bold 20px sans-serif';
+        ctx.font = 'bold 22px sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText(
             `+${weightGain.toFixed(1)} kg`,
             x,
-            y - 30 - progress * 50
+            y - 30 - progress * 30
         );
 
-        // Cynische quote eronder
-        if (quote) {
-            ctx.fillStyle = '#FFF';
-            ctx.font = 'bold 13px sans-serif';
-            // Achtergrond voor leesbaarheid
-            const textW = ctx.measureText(quote).width;
-            ctx.fillStyle = 'rgba(0,0,0,0.6)';
-            ctx.fillRect(x - textW / 2 - 6, y - 55 - progress * 50, textW + 12, 20);
-            ctx.fillStyle = '#FFD700';
-            ctx.fillText(quote, x, y - 40 - progress * 50);
+        // Uitdijende ring (alleen begin)
+        if (progress < 0.4) {
+            ctx.strokeStyle = '#FF6644';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(x, y, 15 + expand, 0, Math.PI * 2);
+            ctx.stroke();
         }
 
-        // Uitdijende ring
-        ctx.strokeStyle = '#FF6644';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(x, y, 15 + expand, 0, Math.PI * 2);
-        ctx.stroke();
-
         ctx.restore();
+    },
+
+    // Teken alle actieve quotes opeengestapeld bovenaan het scherm
+    drawQuoteStack(effects) {
+        const ctx = this.ctx;
+        const w = this.canvas.width;
+        let yPos = 70; // start onder HUD
+
+        effects.forEach((fx) => {
+            if (!fx.quote) return;
+
+            // Langzamere fade voor quotes
+            const alpha = fx.progress < 0.5 ? 1 : 1 - ((fx.progress - 0.5) / 0.5);
+            if (alpha <= 0) return;
+
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, alpha);
+            ctx.textAlign = 'center';
+
+            // Achtergrond balk
+            ctx.font = 'bold 14px sans-serif';
+            const textW = ctx.measureText(fx.quote).width;
+            const boxW = Math.min(textW + 24, w - 20);
+            const boxX = w / 2 - boxW / 2;
+
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+            ctx.beginPath();
+            ctx.roundRect(boxX, yPos - 14, boxW, 24, 8);
+            ctx.fill();
+
+            // Gekleurde rand links (per item type)
+            const colors = { hamburger: '#D2691E', bier: '#F4A460', frieten: '#FFD700' };
+            ctx.fillStyle = colors[fx.type] || '#FFD700';
+            ctx.beginPath();
+            ctx.roundRect(boxX, yPos - 14, 4, 24, [8, 0, 0, 8]);
+            ctx.fill();
+
+            // Quote tekst
+            ctx.fillStyle = '#FFD700';
+            ctx.fillText(fx.quote, w / 2, yPos + 4);
+
+            ctx.restore();
+
+            yPos += 30; // volgende quote eronder stapelen
+        });
     },
 
     /* ---- FINISH LIJN ---- */

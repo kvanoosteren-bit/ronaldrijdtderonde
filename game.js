@@ -387,9 +387,9 @@ const Game = {
         // Cleanup
         this.items = this.items.filter(item => item.y < h + 50);
 
-        // Update effecten
+        // Update effecten - langzamer zodat quotes lang zichtbaar blijven
         this.effects = this.effects.filter(fx => {
-            fx.progress += dt * 1.5; // iets langzamer zodat quotes leesbaar zijn
+            fx.progress += dt * 0.4; // ~2.5 seconden zichtbaar
             return fx.progress < 1;
         });
 
@@ -512,10 +512,13 @@ const Game = {
         // Ronald
         Renderer.drawRonald(this.ronaldX, this.ronaldY, this.weight, this.pedaling);
 
-        // Collision effecten met quotes
+        // Collision effecten (ring + kg bij impact punt)
         this.effects.forEach(fx => {
             Renderer.drawCollisionEffect(fx.x, fx.y, fx.progress, fx.type, fx.quote);
         });
+
+        // Quotes opeengestapeld bovenaan scherm (langzaam fade)
+        Renderer.drawQuoteStack(this.effects);
     },
 
     /* ---- EINDE SPEL ---- */

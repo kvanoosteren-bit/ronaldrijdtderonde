@@ -136,6 +136,14 @@ body {
     color: #1a1a2e;
 }
 
+.subtitle-small {
+    font-size: 0.85rem;
+    color: #e88ca0;
+    margin-top: 12px;
+    font-style: italic;
+    letter-spacing: 0.5px;
+}
+
 .footer-text {
     margin-top: 20px;
     font-size: 0.75rem;

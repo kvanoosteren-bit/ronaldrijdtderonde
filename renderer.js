@@ -349,57 +349,47 @@ const Renderer = {
         ctx.ellipse(-12 * s, -8 * s, 7 * s, 5.5 * s, -0.3, 0.5, Math.PI + 0.5);
         ctx.stroke();
 
-        // Bovenarm - DIKKE SPIERBAL
+        // Bovenarm - MEGA SPIERBAL (nog groter)
         ctx.fillStyle = '#F5CBA7';
         ctx.beginPath();
-        ctx.ellipse(-16 * s, -2 * s, 9 * s, 6 * s, -0.4, 0, Math.PI * 2);
+        ctx.ellipse(-17 * s, -2 * s, 11 * s, 7.5 * s, -0.4, 0, Math.PI * 2);
         ctx.fill();
 
         // Bicep highlight (glans op spierbal)
         ctx.fillStyle = 'rgba(255,255,255,0.25)';
         ctx.beginPath();
-        ctx.ellipse(-14 * s, -4 * s, 5 * s, 3 * s, -0.4, 0, Math.PI * 2);
+        ctx.ellipse(-15 * s, -5 * s, 6 * s, 3.5 * s, -0.4, 0, Math.PI * 2);
         ctx.fill();
 
         // Spier-lijn detail (scheiding bicep/tricep)
         ctx.strokeStyle = 'rgba(180,140,110,0.4)';
         ctx.lineWidth = 1.2 * s;
         ctx.beginPath();
-        ctx.moveTo(-12 * s, -6 * s);
-        ctx.quadraticCurveTo(-17 * s, -2 * s, -14 * s, 3 * s);
+        ctx.moveTo(-12 * s, -7 * s);
+        ctx.quadraticCurveTo(-18 * s, -2 * s, -15 * s, 4 * s);
         ctx.stroke();
 
         // Onderarm (ook dik)
         ctx.fillStyle = '#F5CBA7';
         ctx.beginPath();
-        ctx.ellipse(-14 * s, 5 * s, 5 * s, 7 * s, -0.2, 0, Math.PI * 2);
+        ctx.ellipse(-15 * s, 6 * s, 5.5 * s, 7.5 * s, -0.2, 0, Math.PI * 2);
         ctx.fill();
 
-        // TATTOO "MAGIC" - groot en leesbaar op de bicep
+        // TATTOO "MAGIC" - direct op de spierbal, geen sterretjes
         ctx.save();
-        ctx.translate(-16 * s, -2 * s);
+        ctx.translate(-17 * s, -2 * s);
         ctx.rotate(-0.4);
 
-        // Tattoo achtergrond (banner/lint)
-        ctx.fillStyle = 'rgba(0, 30, 60, 0.2)';
-        this.fillRoundRect(ctx, -10 * s, -4.5 * s, 20 * s, 9 * s, 2 * s);
-
         // Tattoo schaduw
-        ctx.fillStyle = 'rgba(0, 20, 50, 0.6)';
-        ctx.font = `900 ${7 * s}px "Arial Black", Impact, sans-serif`;
+        ctx.fillStyle = 'rgba(0, 20, 50, 0.5)';
+        ctx.font = `900 ${5.5 * s}px "Arial Black", Impact, sans-serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('MAGIC', 0.5 * s, 0.5 * s);
+        ctx.fillText('MAGIC', 0.4 * s, 0.4 * s);
 
-        // Tattoo tekst - groot en vet
+        // Tattoo tekst
         ctx.fillStyle = '#0a1e3d';
         ctx.fillText('MAGIC', 0, 0);
-
-        // Tattoo decoratie (sterretjes boven en onder)
-        ctx.fillStyle = '#0a1e3d';
-        ctx.font = `bold ${3.5 * s}px sans-serif`;
-        ctx.fillText('★ ★ ★', 0, -5.5 * s);
-        ctx.fillText('★ ★ ★', 0, 5.5 * s);
 
         ctx.restore();
 
@@ -415,16 +405,16 @@ const Renderer = {
         ctx.ellipse(12 * s, -8 * s, 7 * s, 5.5 * s, 0.3, -0.5, Math.PI - 0.5);
         ctx.stroke();
 
-        // Bovenarm rechts - spierbal
+        // Bovenarm rechts - spierbal (even groot als links)
         ctx.fillStyle = '#F5CBA7';
         ctx.beginPath();
-        ctx.ellipse(16 * s, -2 * s, 9 * s, 6 * s, 0.4, 0, Math.PI * 2);
+        ctx.ellipse(17 * s, -2 * s, 11 * s, 7.5 * s, 0.4, 0, Math.PI * 2);
         ctx.fill();
 
         // Bicep highlight rechts
         ctx.fillStyle = 'rgba(255,255,255,0.25)';
         ctx.beginPath();
-        ctx.ellipse(14 * s, -4 * s, 5 * s, 3 * s, 0.4, 0, Math.PI * 2);
+        ctx.ellipse(15 * s, -5 * s, 6 * s, 3.5 * s, 0.4, 0, Math.PI * 2);
         ctx.fill();
 
         // Onderarm rechts

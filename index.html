@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Ronald Rijdt de Ronde</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Startscherm -->
+    <div id="start-screen" class="screen">
+        <div class="title-container">
+            <h1>🚴 Ronald Rijdt<br>de Ronde 🇧🇪</h1>
+            <p class="subtitle">Hoe licht krijg jij Ronald over de finish?</p>
+            <div class="start-ronald-preview">
+                <canvas id="preview-canvas" width="120" height="140"></canvas>
+            </div>
+            <p class="start-weight">Startgewicht: <strong>100,0 kg</strong></p>
+            <p class="instructions">
+                Ontwijk frieten, bier en hamburgers!<br>
+                <span class="control-hint desktop-hint">← → pijltjestoetsen of A/D</span>
+                <span class="control-hint mobile-hint">Swipe of gebruik de knoppen</span>
+            </p>
+            <button id="start-btn" class="btn-primary">Start de Koers!</button>
+            <p class="footer-text">Een ludieke wielergame uit Vlaanderen</p>
+        </div>
+    </div>
+
+    <!-- Game canvas -->
+    <div id="game-screen" class="screen hidden">
+        <canvas id="game-canvas"></canvas>
+        <!-- HUD -->
+        <div id="hud">
+            <div id="hud-weight">
+                <span class="hud-label">Gewicht</span>
+                <span id="weight-display">100,0 kg</span>
+            </div>
+            <div id="hud-progress">
+                <span class="hud-label">Parcours</span>
+                <div id="progress-bar-container">
+                    <div id="progress-bar"></div>
+                    <span id="progress-text">0%</span>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile controls -->
+        <div id="mobile-controls">
+            <button id="btn-left" class="ctrl-btn">◀</button>
+            <button id="btn-right" class="ctrl-btn">▶</button>
+        </div>
+    </div>
+
+    <!-- Eindscherm -->
+    <div id="end-screen" class="screen hidden">
+        <div class="end-container">
+            <h2 id="end-title">De Finish!</h2>
+            <p id="end-message" class="end-message"></p>
+            <div class="end-weight-display">
+                <span class="end-weight-label">Eindgewicht</span>
+                <span id="end-weight" class="end-weight-value">85,0 kg</span>
+            </div>
+            <div class="score-input">
+                <input type="text" id="player-name" placeholder="Jouw naam" maxlength="20">
+                <button id="save-score-btn" class="btn-primary">Score Opslaan</button>
+            </div>
+            <div id="leaderboard">
+                <h3>🏆 Rangschikking</h3>
+                <ol id="leaderboard-list"></ol>
+            </div>
+            <button id="restart-btn" class="btn-secondary">Opnieuw Rijden</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

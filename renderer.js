@@ -645,16 +645,12 @@ const Renderer = {
             const boxX = w / 2 - boxW / 2;
 
             ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
-            ctx.beginPath();
-            ctx.roundRect(boxX, yPos - 14, boxW, 24, 8);
-            ctx.fill();
+            this.fillRoundRect(ctx, boxX, yPos - 14, boxW, 24, 8);
 
             // Gekleurde rand links (per item type)
             const colors = { hamburger: '#D2691E', bier: '#F4A460', frieten: '#FFD700' };
             ctx.fillStyle = colors[fx.type] || '#FFD700';
-            ctx.beginPath();
-            ctx.roundRect(boxX, yPos - 14, 4, 24, [8, 0, 0, 8]);
-            ctx.fill();
+            ctx.fillRect(boxX, yPos - 12, 4, 20);
 
             // Quote tekst
             ctx.fillStyle = '#FFD700';
@@ -664,6 +660,22 @@ const Renderer = {
 
             yPos += 30; // volgende quote eronder stapelen
         });
+    },
+
+    // Helper: afgeronde rechthoek (werkt in alle browsers)
+    fillRoundRect(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+        ctx.fill();
     },
 
     /* ---- FINISH LIJN ---- */

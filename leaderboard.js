@@ -66,15 +66,14 @@ const Leaderboard = {
         local.push(entry);
         this.saveLocalScores(local);
 
-        // Probeer ook naar server te sturen
+        // Stuur naar server - alleen sync (bevat al de nieuwe score)
+        // NIET ook apart name/weight meesturen, want dat geeft dubbel!
         try {
             const response = await fetch(this.API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    name: entry.name,
-                    weight: entry.weight,
-                    sync: local // sync alle lokale scores
+                    sync: local
                 })
             });
 

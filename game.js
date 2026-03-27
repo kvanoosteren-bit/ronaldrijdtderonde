@@ -549,7 +549,7 @@ const Game = {
         setTimeout(() => nameInput.focus(), 300);
     },
 
-    saveScore() {
+    async saveScore() {
         const nameInput = document.getElementById('player-name');
         const name = nameInput.value.trim();
         if (!name) {
@@ -558,13 +558,17 @@ const Game = {
             return;
         }
 
-        const finalWeight = Math.round(this.weight * 10) / 10;
-        Leaderboard.saveScore(name, finalWeight);
-        Leaderboard.render(finalWeight);
-
+        // Disable meteen om dubbel klikken te voorkomen
         nameInput.disabled = true;
-        document.getElementById('save-score-btn').disabled = true;
-        document.getElementById('save-score-btn').textContent = 'Opgeslagen!';
+        const btn = document.getElementById('save-score-btn');
+        btn.disabled = true;
+        btn.textContent = 'Opslaan...';
+
+        const finalWeight = Math.round(this.weight * 10) / 10;
+        await Leaderboard.saveScore(name, finalWeight);
+        await Leaderboard.render(finalWeight);
+
+        btn.textContent = 'Opgeslagen!';
     },
 
     /* ---- STARTSCHERM PREVIEW ---- */

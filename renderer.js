@@ -13,13 +13,11 @@ const Renderer = {
         this.ctx = canvas.getContext('2d');
     },
 
-    // Resize canvas naar schermgrootte
     resize() {
         this.canvas.width = this.canvas.parentElement.clientWidth;
         this.canvas.height = this.canvas.parentElement.clientHeight;
     },
 
-    // Wis het hele canvas
     clear() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     },
@@ -31,23 +29,16 @@ const Renderer = {
         const w = this.canvas.width;
         const h = this.canvas.height;
 
-        // Lucht gradient
         const skyGrad = ctx.createLinearGradient(0, 0, 0, h * 0.5);
         skyGrad.addColorStop(0, '#4A90D9');
         skyGrad.addColorStop(1, '#87CEEB');
         ctx.fillStyle = skyGrad;
         ctx.fillRect(0, 0, w, h * 0.5);
 
-        // Wolken (parallax laag 1 - langzaam)
         this.drawClouds(scrollOffset * 0.2);
-
-        // Heuvels achtergrond (parallax laag 2)
         this.drawHills(scrollOffset * 0.4, h * 0.38, '#2d6a1e', 120);
-
-        // Heuvels voorgrond (parallax laag 3)
         this.drawHills(scrollOffset * 0.7, h * 0.45, '#3d8a2e', 80);
 
-        // Gras
         ctx.fillStyle = CONFIG.grassColor;
         ctx.fillRect(0, h * 0.45, w, h * 0.55);
     },
@@ -57,7 +48,6 @@ const Renderer = {
         const w = this.canvas.width;
         ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
 
-        // Paar vaste wolkenposities die herhalen
         const clouds = [
             { x: 100, y: 40, r: 30 },
             { x: 300, y: 60, r: 25 },
@@ -104,24 +94,19 @@ const Renderer = {
         const w = this.canvas.width;
         const h = this.canvas.height;
 
-        // Bereken wegpositie
         const roadLeft = w * (0.5 - CONFIG.laneWidth * CONFIG.laneCount / 2);
         const roadRight = w * (0.5 + CONFIG.laneWidth * CONFIG.laneCount / 2);
         const roadWidth = roadRight - roadLeft;
         const roadTop = h * 0.45;
 
-        // Wegondergrond
         ctx.fillStyle = CONFIG.roadColor;
         ctx.fillRect(roadLeft, roadTop, roadWidth, h - roadTop);
 
-        // Kasseien patroon
         this.drawKasseien(roadLeft, roadTop, roadWidth, h - roadTop, scrollOffset);
 
-        // Witte lijnen tussen banen
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
         ctx.lineWidth = 2;
         ctx.setLineDash([20, 15]);
-
         for (let i = 1; i < CONFIG.laneCount; i++) {
             const lx = roadLeft + (roadWidth / CONFIG.laneCount) * i;
             ctx.beginPath();
@@ -131,7 +116,6 @@ const Renderer = {
         }
         ctx.setLineDash([]);
 
-        // Rode zijkanten (Belgische sfeer)
         ctx.fillStyle = '#cc0000';
         ctx.fillRect(roadLeft - 6, roadTop, 6, h - roadTop);
         ctx.fillRect(roadRight, roadTop, 6, h - roadTop);
@@ -168,25 +152,20 @@ const Renderer = {
         const roadLeft = w * (0.5 - CONFIG.laneWidth * CONFIG.laneCount / 2);
         const roadRight = w * (0.5 + CONFIG.laneWidth * CONFIG.laneCount / 2);
 
-        // Vlaggen langs de kant
         const flagSpacing = 200;
         const flagOffset = scrollOffset % flagSpacing;
 
         for (let fy = roadTop - flagOffset; fy < h + flagSpacing; fy += flagSpacing) {
             if (fy < roadTop - 20) continue;
-            // Linkervlag
             this.drawFlag(roadLeft - 20, fy, scrollOffset);
-            // Rechtervlag
             this.drawFlag(roadRight + 10, fy, scrollOffset);
         }
     },
 
     drawFlag(x, y, time) {
         const ctx = this.ctx;
-        // Stok
         ctx.fillStyle = '#8B4513';
         ctx.fillRect(x, y - 30, 3, 30);
-        // Vlag (Belgische driekleur)
         const wave = Math.sin(time * 0.05 + x) * 2;
         ctx.fillStyle = '#000';
         ctx.fillRect(x + 3, y - 30 + wave, 6, 12);
@@ -196,39 +175,43 @@ const Renderer = {
         ctx.fillRect(x + 15, y - 30 + wave, 6, 12);
     },
 
-    /* ---- RONALD TEKENEN ---- */
+    /* ---- RONALD TEKENEN (GROOT, KAAL, GEEN HELM) ---- */
 
     drawRonald(x, y, weight, pedaling) {
         const ctx = this.ctx;
-        const scale = 1;
+        const s = CONFIG.ronaldScale || 1.6; // schaal factor
 
-        // Buikgrootte schaalt met gewicht (grappig effect)
-        const bellySize = 12 + (weight - 60) * 0.25;
-        const wobble = Math.sin(pedaling * 8) * 2; // wiebel-effect tijdens fietsen
+        // Buikgrootte schaalt met gewicht
+        const bellySize = (14 + (weight - 60) * 0.35) * s;
+        const wobble = Math.sin(pedaling * 8) * 2.5;
 
         ctx.save();
         ctx.translate(x, y + wobble);
 
         // --- FIETS ---
+        const wheelR = 14 * s;
+        const wheelY = 22 * s;
+        const wheelSpread = 18 * s;
+
         // Wielen
         ctx.strokeStyle = '#333';
-        ctx.lineWidth = 2.5;
+        ctx.lineWidth = 2.5 * s;
         ctx.beginPath();
-        ctx.arc(-14 * scale, 18 * scale, 12, 0, Math.PI * 2); // achterwiel
+        ctx.arc(-wheelSpread, wheelY, wheelR, 0, Math.PI * 2);
         ctx.stroke();
         ctx.beginPath();
-        ctx.arc(14 * scale, 18 * scale, 12, 0, Math.PI * 2);  // voorwiel
+        ctx.arc(wheelSpread, wheelY, wheelR, 0, Math.PI * 2);
         ctx.stroke();
 
-        // Spaken draaien
+        // Spaken
         const spokeAngle = pedaling * 10;
-        [[-14, 18], [14, 18]].forEach(([wx, wy]) => {
-            for (let s = 0; s < 4; s++) {
-                const a = spokeAngle + s * Math.PI / 2;
+        [[-wheelSpread, wheelY], [wheelSpread, wheelY]].forEach(([wx, wy]) => {
+            for (let sp = 0; sp < 4; sp++) {
+                const a = spokeAngle + sp * Math.PI / 2;
                 ctx.beginPath();
-                ctx.moveTo(wx + Math.cos(a) * 4, wy * scale + Math.sin(a) * 4);
-                ctx.lineTo(wx + Math.cos(a) * 11, wy * scale + Math.sin(a) * 11);
-                ctx.strokeStyle = '#666';
+                ctx.moveTo(wx + Math.cos(a) * 4 * s, wy + Math.sin(a) * 4 * s);
+                ctx.lineTo(wx + Math.cos(a) * (wheelR - 2), wy + Math.sin(a) * (wheelR - 2));
+                ctx.strokeStyle = '#888';
                 ctx.lineWidth = 1;
                 ctx.stroke();
             }
@@ -236,175 +219,289 @@ const Renderer = {
 
         // Frame
         ctx.strokeStyle = '#E53935';
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 3 * s;
         ctx.beginPath();
-        ctx.moveTo(-14 * scale, 18 * scale); // achterwiel
-        ctx.lineTo(0, 2 * scale);             // zadel
-        ctx.lineTo(14 * scale, 18 * scale);   // voorwiel
-        ctx.moveTo(0, 2 * scale);
-        ctx.lineTo(10 * scale, 4 * scale);    // stuur
+        ctx.moveTo(-wheelSpread, wheelY);
+        ctx.lineTo(-2 * s, 2 * s);
+        ctx.lineTo(wheelSpread, wheelY);
+        ctx.moveTo(-2 * s, 2 * s);
+        ctx.lineTo(12 * s, 6 * s);
         ctx.stroke();
 
         // Zadel
-        ctx.fillStyle = '#333';
-        ctx.fillRect(-5 * scale, 0, 10, 4);
+        ctx.fillStyle = '#222';
+        ctx.beginPath();
+        ctx.ellipse(-2 * s, 0, 6 * s, 2.5 * s, -0.1, 0, Math.PI * 2);
+        ctx.fill();
 
-        // Pedalen (draaien)
+        // Pedalen
         const pedalAngle = pedaling * 10;
         ctx.strokeStyle = '#666';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 2.5 * s;
+        const pedalCX = -wheelSpread + 4 * s;
+        const pedalCY = wheelY;
         ctx.beginPath();
         ctx.moveTo(
-            -14 * scale + Math.cos(pedalAngle) * 8,
-            18 * scale + Math.sin(pedalAngle) * 8
+            pedalCX + Math.cos(pedalAngle) * 9 * s,
+            pedalCY + Math.sin(pedalAngle) * 9 * s
         );
         ctx.lineTo(
-            -14 * scale + Math.cos(pedalAngle + Math.PI) * 8,
-            18 * scale + Math.sin(pedalAngle + Math.PI) * 8
+            pedalCX + Math.cos(pedalAngle + Math.PI) * 9 * s,
+            pedalCY + Math.sin(pedalAngle + Math.PI) * 9 * s
         );
         ctx.stroke();
 
         // --- RONALD'S LICHAAM ---
-        // Benen (trappend)
+
+        // Benen
         ctx.strokeStyle = '#F5CBA7';
-        ctx.lineWidth = 5;
+        ctx.lineWidth = 6 * s;
         const legAngle1 = Math.sin(pedaling * 8) * 0.4;
         const legAngle2 = Math.sin(pedaling * 8 + Math.PI) * 0.4;
-        // Been 1
         ctx.beginPath();
-        ctx.moveTo(-2 * scale, 2 * scale);
-        ctx.lineTo(-8 + legAngle1 * 10, 16 * scale);
+        ctx.moveTo(-2 * s, 4 * s);
+        ctx.lineTo(pedalCX + legAngle1 * 12 * s, wheelY - 2 * s);
         ctx.stroke();
-        // Been 2
         ctx.beginPath();
-        ctx.moveTo(-2 * scale, 2 * scale);
-        ctx.lineTo(-8 + legAngle2 * 10, 16 * scale);
+        ctx.moveTo(-2 * s, 4 * s);
+        ctx.lineTo(pedalCX + legAngle2 * 12 * s, wheelY - 2 * s);
         ctx.stroke();
 
         // Schoenen
         ctx.fillStyle = '#222';
-        ctx.fillRect(-12 + legAngle1 * 10, 15 * scale, 8, 4);
-        ctx.fillRect(-12 + legAngle2 * 10, 15 * scale, 8, 4);
+        ctx.fillRect(pedalCX + legAngle1 * 12 * s - 5 * s, wheelY - 3 * s, 10 * s, 4 * s);
+        ctx.fillRect(pedalCX + legAngle2 * 12 * s - 5 * s, wheelY - 3 * s, 10 * s, 4 * s);
 
-        // Torso / wielershirt (blauw met gele bies - Vlaanderen style)
+        // Torso / wielershirt
         ctx.fillStyle = '#1565C0';
         ctx.beginPath();
-        ctx.ellipse(0, -4 * scale, 10, 12, 0, 0, Math.PI * 2);
+        ctx.ellipse(0, -4 * s, 12 * s, 14 * s, 0, 0, Math.PI * 2);
         ctx.fill();
 
         // Gele bies op shirt
         ctx.strokeStyle = '#FFD700';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 2.5 * s;
         ctx.beginPath();
-        ctx.moveTo(-10, -4 * scale);
-        ctx.lineTo(10, -4 * scale);
+        ctx.moveTo(-12 * s, -4 * s);
+        ctx.lineTo(12 * s, -4 * s);
         ctx.stroke();
 
-        // BUIK! (het grappige deel - groeit met gewicht)
+        // BUIK! (het grappigste deel - groeit flink met gewicht)
         ctx.fillStyle = '#1976D2';
         ctx.beginPath();
         ctx.ellipse(
-            2, 2 * scale,
-            bellySize * 0.7, bellySize * 0.5,
-            0.2, 0, Math.PI * 2
-        );
-        ctx.fill();
-        // Buik highlight
-        ctx.fillStyle = 'rgba(255,255,255,0.15)';
-        ctx.beginPath();
-        ctx.ellipse(
-            0, 0,
-            bellySize * 0.4, bellySize * 0.3,
+            2 * s, 4 * s,
+            bellySize * 0.7, bellySize * 0.55,
             0.2, 0, Math.PI * 2
         );
         ctx.fill();
 
-        // Armen (gestrekt naar stuur)
-        ctx.strokeStyle = '#F5CBA7';
-        ctx.lineWidth = 4;
+        // Buik highlight (glans)
+        ctx.fillStyle = 'rgba(255,255,255,0.12)';
         ctx.beginPath();
-        ctx.moveTo(4 * scale, -8 * scale);
-        ctx.lineTo(10 * scale, 2 * scale);
+        ctx.ellipse(
+            0, 1 * s,
+            bellySize * 0.35, bellySize * 0.25,
+            0.2, 0, Math.PI * 2
+        );
+        ctx.fill();
+
+        // Buik-streep detail (shirt spant)
+        if (weight > 85) {
+            ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+            ctx.lineWidth = 1;
+            for (let i = -2; i <= 2; i++) {
+                ctx.beginPath();
+                ctx.moveTo(i * 4 * s, -2 * s);
+                ctx.lineTo(i * 5 * s, 10 * s);
+                ctx.stroke();
+            }
+        }
+
+        // Armen (naar stuur)
+        ctx.strokeStyle = '#F5CBA7';
+        ctx.lineWidth = 5 * s;
+        ctx.beginPath();
+        ctx.moveTo(5 * s, -10 * s);
+        ctx.quadraticCurveTo(10 * s, -2 * s, 12 * s, 4 * s);
         ctx.stroke();
         ctx.beginPath();
-        ctx.moveTo(-4 * scale, -8 * scale);
-        ctx.lineTo(10 * scale, 2 * scale);
+        ctx.moveTo(-5 * s, -10 * s);
+        ctx.quadraticCurveTo(6 * s, -2 * s, 12 * s, 4 * s);
         ctx.stroke();
 
         // Handschoenen
         ctx.fillStyle = '#222';
         ctx.beginPath();
-        ctx.arc(10 * scale, 2 * scale, 3, 0, Math.PI * 2);
+        ctx.arc(12 * s, 4 * s, 3.5 * s, 0, Math.PI * 2);
         ctx.fill();
 
-        // Hoofd (kaal!)
-        ctx.fillStyle = '#F5CBA7';
+        // --- HOOFD (KAAL! Geen helm, zoals de foto) ---
+        const headR = 13 * s;
+        const headY = -22 * s;
+
+        // Hoofd - huidskleur
+        ctx.fillStyle = '#F0C8A0';
         ctx.beginPath();
-        ctx.arc(0, -20 * scale, 10, 0, Math.PI * 2);
+        ctx.arc(0, headY, headR, 0, Math.PI * 2);
         ctx.fill();
 
-        // Glans op kaal hoofd
-        ctx.fillStyle = 'rgba(255,255,255,0.3)';
+        // Kale glans - prominent (lichtreflectie bovenop hoofd)
+        ctx.fillStyle = 'rgba(255,255,255,0.4)';
         ctx.beginPath();
-        ctx.arc(-2, -23 * scale, 4, 0, Math.PI * 2);
+        ctx.ellipse(-2 * s, headY - headR * 0.45, headR * 0.5, headR * 0.3, -0.2, 0, Math.PI * 2);
         ctx.fill();
 
-        // Ogen
-        ctx.fillStyle = '#333';
+        // Tweede glans (extra kaal effect)
+        ctx.fillStyle = 'rgba(255,255,255,0.2)';
         ctx.beginPath();
-        ctx.arc(-3, -20 * scale, 1.5, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(3, -20 * scale, 1.5, 0, Math.PI * 2);
+        ctx.ellipse(3 * s, headY - headR * 0.55, headR * 0.25, headR * 0.15, 0.3, 0, Math.PI * 2);
         ctx.fill();
 
-        // Glimlach / inspanning (afhankelijk van gewicht)
-        ctx.strokeStyle = '#333';
-        ctx.lineWidth = 1.5;
+        // Lichte stoppels aan zijkanten (zoals de foto)
+        ctx.fillStyle = 'rgba(180, 160, 140, 0.3)';
+        // Links
         ctx.beginPath();
-        if (weight > 90) {
-            // Zwetend gezicht bij hoog gewicht
-            ctx.arc(0, -17 * scale, 4, 0.1, Math.PI - 0.1, true); // frown
-            // Zweetdruppels
-            ctx.fillStyle = '#87CEEB';
-            ctx.fill();
-            ctx.fillRect(7, -22 * scale, 2, 4);
-            ctx.fillRect(9, -18 * scale, 2, 3);
-        } else {
-            // Blij gezicht
-            ctx.arc(0, -22 * scale, 4, 0.2, Math.PI - 0.2);
-        }
+        ctx.ellipse(-headR * 0.75, headY + headR * 0.1, headR * 0.25, headR * 0.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Rechts
+        ctx.beginPath();
+        ctx.ellipse(headR * 0.75, headY + headR * 0.1, headR * 0.25, headR * 0.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Oren
+        ctx.fillStyle = '#E8B888';
+        ctx.beginPath();
+        ctx.ellipse(-headR - 2 * s, headY + 2 * s, 3 * s, 5 * s, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(headR + 2 * s, headY + 2 * s, 3 * s, 5 * s, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Wenkbrauwen
+        ctx.strokeStyle = '#8B7355';
+        ctx.lineWidth = 2 * s;
+        ctx.beginPath();
+        ctx.moveTo(-6 * s, headY - 5 * s);
+        ctx.quadraticCurveTo(-4 * s, headY - 7 * s, -1 * s, headY - 5.5 * s);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(2 * s, headY - 5.5 * s);
+        ctx.quadraticCurveTo(5 * s, headY - 7 * s, 7 * s, headY - 5 * s);
         ctx.stroke();
 
-        // Helm
-        ctx.fillStyle = '#FFD700';
+        // Ogen (groter, expressiever)
+        // Oogwit
+        ctx.fillStyle = '#FFF';
         ctx.beginPath();
-        ctx.ellipse(0, -25 * scale, 11, 6, 0, Math.PI, 0);
+        ctx.ellipse(-4 * s, headY - 2 * s, 3.5 * s, 3 * s, 0, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = '#FFC107';
         ctx.beginPath();
-        ctx.ellipse(0, -26 * scale, 9, 3, 0, Math.PI, 0);
+        ctx.ellipse(4 * s, headY - 2 * s, 3.5 * s, 3 * s, 0, 0, Math.PI * 2);
         ctx.fill();
+
+        // Pupillen (kijken soms naar items)
+        ctx.fillStyle = '#4A7A5A'; // groenige ogen zoals de foto
+        ctx.beginPath();
+        ctx.arc(-4 * s, headY - 1.5 * s, 2 * s, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(4 * s, headY - 1.5 * s, 2 * s, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Pupil zwart
+        ctx.fillStyle = '#111';
+        ctx.beginPath();
+        ctx.arc(-4 * s, headY - 1.5 * s, 1 * s, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(4 * s, headY - 1.5 * s, 1 * s, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Oog-highlight
+        ctx.fillStyle = '#FFF';
+        ctx.beginPath();
+        ctx.arc(-3 * s, headY - 2.5 * s, 0.7 * s, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(5 * s, headY - 2.5 * s, 0.7 * s, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Neus (klein, rond)
+        ctx.fillStyle = '#E0A878';
+        ctx.beginPath();
+        ctx.ellipse(0, headY + 2 * s, 2.5 * s, 2 * s, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Mond / gezichtsuitdrukking (afhankelijk van gewicht)
+        ctx.strokeStyle = '#8B5E3C';
+        ctx.lineWidth = 2 * s;
+        ctx.beginPath();
+        if (weight > 95) {
+            // Echt hijgend / open mond
+            ctx.fillStyle = '#CC6666';
+            ctx.beginPath();
+            ctx.ellipse(0, headY + 7 * s, 4 * s, 3 * s, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#FFF';
+            ctx.fillRect(-3 * s, headY + 5 * s, 6 * s, 1.5 * s); // tanden
+
+            // Flink zweten
+            ctx.fillStyle = 'rgba(100, 180, 255, 0.7)';
+            ctx.beginPath();
+            ctx.ellipse(headR + 1 * s, headY - 3 * s, 1.5 * s, 3 * s, 0.3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(headR + 3 * s, headY + 4 * s, 1 * s, 2 * s, 0.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(-headR - 1 * s, headY + 1 * s, 1.2 * s, 2.5 * s, -0.3, 0, Math.PI * 2);
+            ctx.fill();
+        } else if (weight > 85) {
+            // Inspanning, beetje zweten
+            ctx.arc(0, headY + 4 * s, 5 * s, 0.15, Math.PI - 0.15, true); // frown
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(100, 180, 255, 0.6)';
+            ctx.beginPath();
+            ctx.ellipse(headR, headY - 2 * s, 1.2 * s, 2.5 * s, 0.3, 0, Math.PI * 2);
+            ctx.fill();
+        } else {
+            // Blije glimlach
+            ctx.arc(0, headY + 3 * s, 5 * s, 0.2, Math.PI - 0.2);
+            ctx.stroke();
+
+            // Kuiltjes
+            ctx.fillStyle = '#D4A07A';
+            ctx.beginPath();
+            ctx.arc(-6 * s, headY + 5 * s, 1.2 * s, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(6 * s, headY + 5 * s, 1.2 * s, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Kin/kaak (wat voller bij hoog gewicht)
+        if (weight > 90) {
+            ctx.fillStyle = '#E8B888';
+            ctx.beginPath();
+            ctx.ellipse(0, headY + headR + 2 * s, headR * 0.6, 4 * s * (weight / 90), 0, 0, Math.PI);
+            ctx.fill();
+        }
 
         ctx.restore();
     },
 
-    // Preview-versie voor startscherm
+    // Preview voor startscherm
     drawRonaldPreview(canvas) {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.save();
-        ctx.translate(canvas.width / 2, canvas.height / 2 + 10);
-        ctx.scale(1.3, 1.3);
-        // Hergebruik Ronald tekening op origin
-        ctx.translate(0, 0);
+        ctx.translate(canvas.width / 2, canvas.height / 2 + 20);
+        const savedCtx = this.ctx;
         this.ctx = ctx;
         this.drawRonald(0, 0, 100, performance.now() / 1000);
+        this.ctx = savedCtx;
         ctx.restore();
-        // Herstel game canvas context
-        if (this.canvas) {
-            this.ctx = this.canvas.getContext('2d');
-        }
     },
 
     /* ---- ITEMS TEKENEN ---- */
@@ -414,13 +511,9 @@ const Renderer = {
         ctx.save();
         ctx.translate(x, y);
 
-        if (type === 'hamburger') {
-            this.drawHamburger(size);
-        } else if (type === 'bier') {
-            this.drawBier(size);
-        } else if (type === 'frieten') {
-            this.drawFrieten(size);
-        }
+        if (type === 'hamburger') this.drawHamburger(size);
+        else if (type === 'bier') this.drawBier(size);
+        else if (type === 'frieten') this.drawFrieten(size);
 
         ctx.restore();
     },
@@ -428,18 +521,14 @@ const Renderer = {
     drawHamburger(s) {
         const ctx = this.ctx;
         const r = s / 2;
-        // Onderbroodje
         ctx.fillStyle = '#D2691E';
         ctx.beginPath();
         ctx.ellipse(0, 4, r, r * 0.4, 0, 0, Math.PI);
         ctx.fill();
-        // Vlees
         ctx.fillStyle = '#8B4513';
         ctx.fillRect(-r + 2, -2, s - 4, 6);
-        // Sla
         ctx.fillStyle = '#4CAF50';
         ctx.fillRect(-r + 3, -4, s - 6, 3);
-        // Kaas
         ctx.fillStyle = '#FFC107';
         ctx.beginPath();
         ctx.moveTo(-r + 2, -4);
@@ -447,12 +536,10 @@ const Renderer = {
         ctx.lineTo(r, -6);
         ctx.lineTo(-r, -6);
         ctx.fill();
-        // Bovenbroodje met sesamzaadjes
         ctx.fillStyle = '#E8A952';
         ctx.beginPath();
         ctx.ellipse(0, -6, r, r * 0.5, 0, Math.PI, 0);
         ctx.fill();
-        // Sesamzaadjes
         ctx.fillStyle = '#FFF8DC';
         ctx.fillRect(-4, -10, 2, 3);
         ctx.fillRect(2, -11, 2, 3);
@@ -462,18 +549,14 @@ const Renderer = {
     drawBier(s) {
         const ctx = this.ctx;
         const r = s / 2;
-        // Glas
         ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
         ctx.fillRect(-r * 0.5, -r, r, r * 1.6);
-        // Bier
         ctx.fillStyle = '#F4A460';
         ctx.fillRect(-r * 0.5 + 1, -r * 0.5, r - 2, r * 1.1);
-        // Schuim
         ctx.fillStyle = '#FFFDD0';
         ctx.beginPath();
         ctx.ellipse(0, -r * 0.5, r * 0.55, r * 0.25, 0, 0, Math.PI * 2);
         ctx.fill();
-        // Oor van het glas
         ctx.strokeStyle = 'rgba(255,255,255,0.4)';
         ctx.lineWidth = 2;
         ctx.beginPath();
@@ -484,7 +567,6 @@ const Renderer = {
     drawFrieten(s) {
         const ctx = this.ctx;
         const r = s / 2;
-        // Puntzak (rood-wit gestreept, typisch Belgisch)
         ctx.fillStyle = '#CC0000';
         ctx.beginPath();
         ctx.moveTo(-r * 0.7, -r * 0.3);
@@ -493,26 +575,23 @@ const Renderer = {
         ctx.lineTo(-r * 0.3, r);
         ctx.closePath();
         ctx.fill();
-        // Witte streep
         ctx.fillStyle = '#FFF';
         ctx.fillRect(-r * 0.1, -r * 0.3, r * 0.2, r * 1.2);
-        // Frieten die uitsteken
         ctx.fillStyle = '#FFD700';
         const frietjes = [-6, -2, 2, 5, -4, 0, 4];
         frietjes.forEach((fx, i) => {
             const fh = 8 + (i % 3) * 4;
             ctx.fillRect(fx - 1.5, -r * 0.3 - fh, 3, fh);
         });
-        // Mayonaise klodder
         ctx.fillStyle = '#FFFDD0';
         ctx.beginPath();
         ctx.arc(0, -r * 0.3 - 6, 4, 0, Math.PI * 2);
         ctx.fill();
     },
 
-    /* ---- COLLISION ANIMATIE ---- */
+    /* ---- COLLISION ANIMATIE MET QUOTE ---- */
 
-    drawCollisionEffect(x, y, progress, itemType) {
+    drawCollisionEffect(x, y, progress, itemType, quote) {
         const ctx = this.ctx;
         const alpha = 1 - progress;
         const expand = progress * 30;
@@ -520,16 +599,28 @@ const Renderer = {
         ctx.save();
         ctx.globalAlpha = alpha;
 
-        // Gewicht-tekst die omhoog zweeft
+        // Gewicht-tekst
         const weightGain = CONFIG.items[itemType].weight;
         ctx.fillStyle = '#FF4444';
-        ctx.font = 'bold 18px sans-serif';
+        ctx.font = 'bold 20px sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText(
             `+${weightGain.toFixed(1)} kg`,
             x,
-            y - 30 - progress * 40
+            y - 30 - progress * 50
         );
+
+        // Cynische quote eronder
+        if (quote) {
+            ctx.fillStyle = '#FFF';
+            ctx.font = 'bold 13px sans-serif';
+            // Achtergrond voor leesbaarheid
+            const textW = ctx.measureText(quote).width;
+            ctx.fillStyle = 'rgba(0,0,0,0.6)';
+            ctx.fillRect(x - textW / 2 - 6, y - 55 - progress * 50, textW + 12, 20);
+            ctx.fillStyle = '#FFD700';
+            ctx.fillText(quote, x, y - 40 - progress * 50);
+        }
 
         // Uitdijende ring
         ctx.strokeStyle = '#FF6644';

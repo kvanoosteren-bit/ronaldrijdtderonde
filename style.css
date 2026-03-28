@@ -175,6 +175,23 @@ body {
     transform: scale(0.97);
 }
 
+.btn-donate-small {
+    display: inline-block;
+    margin-top: 12px;
+    color: #e88ca0;
+    font-size: 0.8rem;
+    text-decoration: none;
+    border: 1px solid rgba(232, 72, 135, 0.4);
+    padding: 8px 20px;
+    border-radius: 50px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn-donate-small:hover {
+    background: rgba(232, 72, 135, 0.15);
+    color: #ff6b9d;
+}
+
 .subtitle-small {
     font-size: 0.85rem;
     color: #e88ca0;

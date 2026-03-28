@@ -136,6 +136,45 @@ body {
     color: #1a1a2e;
 }
 
+/* Doneer banner */
+.donate-banner {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.12), rgba(232, 72, 135, 0.12));
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin: 20px 0 8px;
+    text-align: center;
+}
+
+.donate-text {
+    font-size: 0.9rem;
+    color: #ddd;
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+
+.btn-donate {
+    display: inline-block;
+    background: linear-gradient(135deg, #E84887, #ff6b9d);
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 28px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(232, 72, 135, 0.4);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.btn-donate:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(232, 72, 135, 0.6);
+}
+
+.btn-donate:active {
+    transform: scale(0.97);
+}
+
 .subtitle-small {
     font-size: 0.85rem;
     color: #e88ca0;
